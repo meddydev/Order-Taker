@@ -65,7 +65,7 @@ class Menu
         @client = Twilio::REST::Client.new(account_sid, auth_token)
         message = @client.messages.create(
             body: "Thank you! Your order was placed and will be delivered before #{arrival_time_string}",
-            to: phone_number,
+            to: my_phone_number,
             from: "+18453902211")
         puts messade.sid
     end
