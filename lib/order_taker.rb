@@ -27,9 +27,6 @@ class Menu
         fail "Order already confirmed. Cannot select new items." if @confirm
         fail "This dish is not on the menu." unless @menu.include?(dish)
         @selections << dish
-        # doesn't return anything, just adds dish (and its price) to a new array or hash
-        # fails if dish isn't in @menu
-        # fail "can't select item, already ordered" if confirm has been called
     end
 
     def remove(dish)
@@ -60,7 +57,7 @@ class Menu
         @confirm = true
         arrival_time = Time.now + 30*60
         arrival_time_string = arrival_time.strftime("%k:%M")
-        phone_number = ENV['MY_PHONE_NUMBER']
+        my_phone_number = ENV['MY_PHONE_NUMBER']
         
         account_sid = ENV['TWILIO_ACCOUNT_SID']
         auth_token = ENV['TWILIO_AUTH_TOKEN']
@@ -77,7 +74,3 @@ class Menu
         @confirm
     end
 end
-
-menu = Menu.new
-menu.select("Chips")
-menu.confirm_order
