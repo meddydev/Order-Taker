@@ -1,3 +1,5 @@
+require 'twilio-ruby'
+
 class Menu
     def initialize
         @menu = {
@@ -56,10 +58,26 @@ class Menu
     def confirm_order
         fail "Cannot confirm order: no dishes have been selected." if @selections.empty?
         @confirm = true
-        # places order, customer gets text
+        arrival_time = Time.now + 30*60
+        arrival_time_string = arrival_time.strftime("%k:%M")
+        phone_number = ENV['MY_PHONE_NUMBER']
+        
+        account_sid = ENV['TWILIO_ACCOUNT_SID']
+        auth_token = ENV['TWILIO_AUTH_TOKEN']
+
+        @client = Twilio::REST::Client.new(account_sid, auth_token)
+        message = @client.messages.create(
+            body: "Thank you! Your order was placed and will be delivered before #{arrival_time_string}",
+            to: phone_number,
+            from: "+18453902211")
+        puts messade.sid
     end
 
     def confirmed?
         @confirm
     end
 end
+
+menu = Menu.new
+menu.select("Chips")
+menu.confirm_order
