@@ -68,7 +68,7 @@ describe Menu do
 
     it "raises error when trying to confirm order when nothing has been selected" do
         menu = Menu.new
-        expect {menu.confirm_order}.to raise_error "Cannot confirm order: no dishes have been selected."
+        expect { menu.confirm_order }.to raise_error "Cannot confirm order: no dishes have been selected."
     end
 
     context "after confirming order" do
@@ -87,5 +87,19 @@ describe Menu do
             menu.confirm_order
             expect { menu.remove("Chips") }.to raise_error "Order already confirmed. Cannot remove items."
         end
+    end
+
+    it "sends text message" do
+        client = double(:fake_client)
+        message_object = double(:fake_message)
+        menu = Menu.new
+        menu.select("Chips")
+        expect(client).to receive(:messages).and_return(message_object)
+        expect(message_object).to receive(:create).with(
+            body: "Thank you! Your order was placed and will be delivered before #{(Time.now + 30*60).strftime("%k:%M")}",
+            to: ENV['MY_PHONE_NUMBER'],
+            from: "+18453902211")
+        
+        menu.confirm_order(client)
     end
 end

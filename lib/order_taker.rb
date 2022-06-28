@@ -12,6 +12,11 @@ class Menu
         }
         @selections = []
         @confirm = false
+
+        @my_phone_number = ENV['MY_PHONE_NUMBER']
+        @account_sid = ENV['TWILIO_ACCOUNT_SID']
+        @auth_token = ENV['TWILIO_AUTH_TOKEN']
+        @twilio = Twilio::REST::Client.new(@account_sid, @auth_token)
     end
 
     def list
@@ -52,25 +57,25 @@ class Menu
         puts formatted_receipt
     end
 
-    def confirm_order
+    def confirm_order(client = @twilio)
         fail "Cannot confirm order: no dishes have been selected." if @selections.empty?
         @confirm = true
         arrival_time = Time.now + 30*60
         arrival_time_string = arrival_time.strftime("%k:%M")
-        my_phone_number = ENV['MY_PHONE_NUMBER']
-        
-        account_sid = ENV['TWILIO_ACCOUNT_SID']
-        auth_token = ENV['TWILIO_AUTH_TOKEN']
 
-        @client = Twilio::REST::Client.new(account_sid, auth_token)
+        @client = client
         message = @client.messages.create(
             body: "Thank you! Your order was placed and will be delivered before #{arrival_time_string}",
-            to: my_phone_number,
+            to: @my_phone_number,
             from: "+18453902211")
-        puts messade.sid
+        # puts message.sid
     end
 
     def confirmed?
         @confirm
     end
 end
+
+# menu = Menu.new
+# menu.select("Chips")
+# menu.confirm_order
